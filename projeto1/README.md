@@ -3,6 +3,7 @@ Repositorio destinado para o desenvolvimento do projeto 1
 
 Configuração:
 *Testado no ubuntu 14.04*
+
 1) Instalar apache2: sudo apt-get install apache2 (pode ser necessaria a instalação do pacote libapache2-mod-python)
 2) Configurar o arquivo /etc/apache/sites-available/000-default.conf igual ao da pasta /config deste repositório
 3) Criar diretório /var/cgi-bin: sudo mkdir /var/cgi-bin
