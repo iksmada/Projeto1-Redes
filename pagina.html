@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title> Trabalho 1 - Redes </title>
+    </head>
+    <body>
+        <div id="containterCmd" style="width:90%; height :30%; text-align:center;margin:0 auto; border-radius:5px; padding:20px;">
+            <div id="header" style="text-align:center;">
+                <h1> Trabalho 1 - Redes </h1>
+            </div>
+            <form method="post" action="">
+                <div id="maquina1" style="width:30%; height:30%; float:left;text-align:right">
+                    <p>Comando - Maquina 1</p>
+                    <div id="alinha1" style="float:right; text-align:left">
+                        <input type="checkbox" name="cmdPS1" value="ps1">ps<br>
+                        <input type="checkbox" name="cmdDf1" value="df1">df<br>
+                        <input type="checkbox" name="cmdFinger1" value="finger1">finger<br>
+                        <input type="checkbox" name="cmdUptime1" value="uptime1">uptime<br>
+                    </div>
+                </div>
+                <div id="maquina2" style="width:30%; height:30%; float:left; text-aling:center">
+                    <p>Comando - Maquina 2</p>
+                    <div id="alinha2" style="float:center; text-aling:left;">
+                        <input type="checkbox" name="cmdPS2" value="ps2">ps<br>
+                        <input type="checkbox" name="cmdDf2" value="df2">df<br>
+                        <input type="checkbox" name="cmdFinger2" value="finger2">finger<br>
+                        <input type="checkbox" name="cmdUptime2" value="uptime2">uptime<br>
+                    </div>
+                </div>
+                <div id="maquina3" style="width:30%; height:30%; float:left; text-align:left;">
+                    <p>Comando - Maquina 3</p>
+                    <input type="checkbox" name="cmdPS3" value="ps3">ps<br>
+                    <input type="checkbox" name="cmdDf3" value="df3">df<br>
+                    <input type="checkbox" name="cmdFinger3" value="finger3">finger<br>
+                    <input type="checkbox" name="cmdUptime3" value="uptime3">uptime<br>
+                    <br>
+                    <input type="submit" value="Enviar" />
+                    <input type="submit" value="Limpar" />
+                </div>
+            </form>
+        </div>
+        <div id="containterCmd" style="width:90%; height :30%; text-align:center;margin:0 auto; border-radius:5px; padding:50px">
+            <hr>
+            <div id="maquina1r" style="width:30%; height:30%; float:left;text-align:right">
+                <p>Resposta - Maquina 1</p>
+                <textarea readonly name="comments1" cols="25" rows="5"></textarea>
+            </div>
+            <div id="maquina2r" style="width:30%; height:30%;float:left;">
+                <p>Resposta - Maquina 2</p>
+                <textarea readonly name="comments2" cols="25" rows="5"></textarea>
+            </div>
+            <div id="maquina3r" style="width:30%; height:30%;float:left;text-align:left">
+                <p>Resposta - Maquina 3</p>
+                <textarea readonly name="comments3" cols="25" rows="5"></textarea>
+            </div>
+        </div>
+    </body>
+</html>
