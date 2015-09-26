@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding=UTF-8
 
+from backend import servidor
 import cgi
 
 print "Content-Type: text/html"
@@ -65,9 +66,8 @@ print '''\
 '''
 
 form = cgi.FieldStorage()
-
 cmdMaquina1 = form.getlist("cmd1")
 cmdMaquina2 = form.getlist("cmd2")
 cmdMaquina3 = form.getlist("cmd3")
-
-print cmdMaquina1
+if cmdMaquina1:
+    servidor(cmdMaquina1)
