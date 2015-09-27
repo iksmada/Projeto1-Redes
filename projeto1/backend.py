@@ -1,6 +1,7 @@
 import socket
 
 def servidor(cmd):
+    print "backend v2"
     host = ''
     porta = 5000
     endereco = ((host, porta))

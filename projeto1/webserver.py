@@ -9,7 +9,7 @@ print
 print '''\
 <html>
     <head>
-        <title> Trabalho 1 - Redes </title>
+        <title> Trabalho 1 - Redes, web v2</title>
     </head>
     <body>
         <div id="containterCmd" style="width:90%; height :30%; text-align:center;margin:0 auto; border-radius:5px; padding:20px;">
