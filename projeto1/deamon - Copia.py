@@ -6,16 +6,8 @@ def main():
     #conexao com socket recebe comando
     host = '127.0.0.1'
     porta = 5000
-    conexaoCliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    destino = ((host, porta))
-    output = ""
-    conexaoCliente.connect(destino)
-
-    while True:
-        #recebe comando
-        mensagem = conexaoCliente.recv(1024)
-        #fecha conexao se receber "fechar" do servidor
-                    #recebe o comando partindo do codigo recebido
+    mensagem = 'REQUEST 1 -ef -t | ; > . . ..'
+    if True:
         comando = decodifica(mensagem)
         if comando == "fechar":
             output = "mensagem bugada"
@@ -23,15 +15,9 @@ def main():
             print "exec Comando "+ comando + "\n"
             #executa comando(S)
             output = "\nComando "+comando+" saida:\n" + os.popen(comando).read() + "\n"
-        #cenvia saida do(S) comando(S)
-        try:
-            conexaoCliente.send(output)
-            conexaoCliente.close()
-            break
-        except Exception:
-            conexaoCliente.close()
-            break
-
+	print output
+	raw_input()
+        
 def decodifica(cmd):
     print "cmd:"+cmd+"|\n"
     lista = cmd.split()
@@ -40,13 +26,47 @@ def decodifica(cmd):
         return "fechar"
     if lista[1] == "1":
         resultado = "ps"
+        args=cmd.split("1")
     if lista[1] == "2":
         resultado = "df"
+        args=cmd.split("2")
     if lista[1] == "3":
         resultado = "finger"
+        args=cmd.split("3")
     if lista[1] == "4":
         resultado = "uptime"
+        args=cmd.split("4")
+    resultado += args[1]
+    resultado = protege(resultado)
+    print resultado
+    raw_input()
     return resultado
+
+def protege(cmd):
+    onde = '0'
+    while onde>-1:
+        onde = cmd.find('|')
+        if onde>-1:
+            cmd[onde]=' '
+    onde = '0'
+    while onde>-1:
+        onde = cmd.find(';')
+        if onde>-1:
+            cmd[onde]=' '
+    onde = '0'
+    while onde>-1:
+        onde = cmd.find('>')
+        if onde>-1:
+            cmd[onde]=' '
+    onde = '0'
+    while onde>-1:
+        onde = cmd.find('.')
+        if onde>-1:
+            cmd[onde]=' '
+    print cmd
+    raw_input()
+    return cmd
+
         
     
 
