@@ -15,12 +15,18 @@ Configuração:
 
 5) Dar permissões para que o arquivo seja executado: sudo chmod +x /var/cgi-bin/webserver.py && sudo chmod 755 /var/cgi-bin/webserver.py
 
-6) No browser entrar no endereço localhost/cgi-bin/webserver.py
+	Caso ocorra algum erro é recomentado procurar em:
 
-Caso ocorra algum erro é recomentado procurar em:
+	1) http://perlmaven.com/perl-cgi-script-with-apache2
 
-1) http://perlmaven.com/perl-cgi-script-with-apache2
+	2) https://www.linux.com/community/blogs/129-servers/757148-configuring-apache2-to-run-python-scripts
 
-2) https://www.linux.com/community/blogs/129-servers/757148-configuring-apache2-to-run-python-scripts
+	3)http://askubuntu.com/questions/547391/apache2-4-7-on-ubuntu-14-04-wont-execute-python-cgi-file-the-site-displays-pyt
 
-3)http://askubuntu.com/questions/547391/apache2-4-7-on-ubuntu-14-04-wont-execute-python-cgi-file-the-site-displays-pyt
+Execu��o:
+
+1) No browser entrar no endereço localhost/cgi-bin/webserver.py
+
+2) Enviar comando
+
+3) abrir deamon.py
