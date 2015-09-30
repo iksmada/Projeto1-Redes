@@ -1,7 +1,7 @@
 # Projeto 1
 Repositorio destinado para o desenvolvimento do projeto 1
 
-Configuracao:
+Configuração:
 *Testado no ubuntu 14.04*
 
 1) Instalar apache2: sudo apt-get install apache2 (pode ser necessaria a instalacao do pacote libapache2-mod-python e python)

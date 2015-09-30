@@ -3,12 +3,31 @@
 
 from backend import servidor
 import cgi, cgitb
+import Queue
+from threading import Thread
+
+class Th(Thread):
+    def __init__ (self,comando,fila):
+        Thread.__init__(self)
+        self.cmd = comando
+        self.q = fila
+        
+
+    def run(self):
+        self.q.put(servidor(self.cmd))
+        
+
 cmdMaquina1 = "REQUEST "
 cmdMaquina2 = "REQUEST "
 cmdMaquina3 = "REQUEST "
+fila1=Queue.Queue()
+fila2=Queue.Queue()
+fila3=Queue.Queue()
 saidaMaquina1 = ""
 saidaMaquina2 = ""
 saidaMaquina3 = ""
+
+threads= []
 
 print "Content-Type: text/html"
 print
@@ -64,7 +83,9 @@ cmdMaquina3 += " ".join(form.getlist("cmd3"))
 #Envia os comandos para a maquina 1
 #print cmdMaquina1
 if cmdMaquina1 !="REQUEST ":
-    saidaMaquina1 += servidor(cmdMaquina1)
+    thread1= Th(cmdMaquina1,fila1)
+    thread1.start()
+    threads.append(thread1)
     cmdMaquina1 =="REQUEST "
 #Envia os comandos para a maquina 2
 if cmdMaquina2 !="REQUEST ":
@@ -72,6 +93,16 @@ if cmdMaquina2 !="REQUEST ":
 #Envia os comandos para a maquina 3
 if cmdMaquina3 !="REQUEST ":
     saidaMaquina3 += servidor(cmdMaquina3)
+
+#espera terminar todas
+for t in threads:
+    t.join()
+threads=[]
+
+#pega respostas nas filas criadas
+if not fila1.empty():
+    saidaMaquina1=fila1.get()
+    fila1.task_done()
 
 print '''\
         <div id="containterCmd" style="width:90%; height :30%; text-align:center;margin:0 auto; border-radius:5px; padding:50px">
