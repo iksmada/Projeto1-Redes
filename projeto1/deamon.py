@@ -4,16 +4,19 @@ import socket
 def main():
     print "entrou deamon"
     #conexao com socket recebe comando
-    host = '127.0.0.1'
+    host = ''
     porta = 5000
+    endereco = ((host, porta))
     conexaoCliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    destino = ((host, porta))
-    output = ""
-    conexaoCliente.connect(destino)
+    conexaoCliente.bind(endereco)
+    # #escuta no maximo tres maquinas
+    conexaoCliente.listen(3)
+    # #aceita conexao
 
     while True:
+        con, addrCli = conexaoCliente.accept()
         #recebe comando
-        mensagem = conexaoCliente.recv(1024)
+        mensagem = con.recv(1024)
         #fecha conexao se receber "fechar" do servidor
                     #recebe o comando partindo do codigo recebido
         comando = decodifica(mensagem)
@@ -25,7 +28,7 @@ def main():
             output = "RESPONSE "+comando + os.popen(comando).read()
         #cenvia saida do(S) comando(S)
         try:
-            conexaoCliente.send(output)
+            con.send(output)
 
         except Exception:
             conexaoCliente.close()
@@ -34,7 +37,6 @@ def main():
 def decodifica(cmd):
     print "cmd:"+cmd+"|\n"
     lista = cmd.split()
-    print lista
     if lista[0] != "REQUEST":
         return "fechar"
     if lista[1] == "1":

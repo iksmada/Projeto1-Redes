@@ -1,5 +1,6 @@
 import socket
 
+
 def servidor(cmd):
     #print "entrou back"
     data = ''
