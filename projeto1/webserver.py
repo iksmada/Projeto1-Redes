@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding=UTF-8
 
-from backend import servidor
+from backend import enviarMsg
 import cgi, cgitb
 import Queue
 from threading import Thread
@@ -14,7 +14,7 @@ class Th(Thread):
         
 
     def run(self):
-        self.q.put(servidor(self.cmd))
+        self.q.put(enviarMsg(self.cmd)) #coloca na filao retorno da msg enviada ao servidor
         
 
 cmdMaquina1 = "REQUEST "
@@ -89,10 +89,10 @@ if cmdMaquina1 !="REQUEST ":
     cmdMaquina1 =="REQUEST "
 #Envia os comandos para a maquina 2
 if cmdMaquina2 !="REQUEST ":
-    saidaMaquina2 += servidor(cmdMaquina2)
+    saidaMaquina2 += enviarMsg(cmdMaquina2)
 #Envia os comandos para a maquina 3
 if cmdMaquina3 !="REQUEST ":
-    saidaMaquina3 += servidor(cmdMaquina3)
+    saidaMaquina3 += enviarMsg(cmdMaquina3)
 
 #espera terminar todas
 for t in threads:

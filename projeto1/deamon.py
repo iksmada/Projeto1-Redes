@@ -4,6 +4,7 @@ import socket
 def main():
     print "entrou deamon"
     #conexao com socket recebe comando
+    saidaTerminal = ''
     host = ''
     porta = 5000
     endereco = ((host, porta))
