@@ -89,10 +89,16 @@ if cmdMaquina1 !="REQUEST ":
     cmdMaquina1 =="REQUEST "
 #Envia os comandos para a maquina 2
 if cmdMaquina2 !="REQUEST ":
-    saidaMaquina2 += enviarMsg(cmdMaquina2)
+    thread2= Th(cmdMaquina2,fila2)
+    thread2.start()
+    threads.append(thread2)
+    cmdMaquina2 =="REQUEST "
 #Envia os comandos para a maquina 3
 if cmdMaquina3 !="REQUEST ":
-    saidaMaquina3 += enviarMsg(cmdMaquina3)
+    thread3= Th(cmdMaquina3,fila3)
+    thread3.start()
+    threads.append(thread3)
+    cmdMaquina2 =="REQUEST "
 
 #espera terminar todas
 for t in threads:
@@ -103,6 +109,14 @@ threads=[]
 if not fila1.empty():
     saidaMaquina1=fila1.get()
     fila1.task_done()
+
+if not fila2.empty():
+    saidaMaquina2=fila2.get()
+    fila2.task_done()
+
+if not fila3.empty():
+    saidaMaquina3=fila3.get()
+    fila3.task_done()
 
 print '''\
         <div id="containterCmd" style="width:90%; height :30%; text-align:center;margin:0 auto; border-radius:5px; padding:50px">

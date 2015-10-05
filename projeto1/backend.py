@@ -1,6 +1,5 @@
 import socket
 
-
 def enviarMsg(cmd):
     host = '127.0.0.1'
     porta = 5000
@@ -9,25 +8,37 @@ def enviarMsg(cmd):
     try:
         conexaoServidor.connect(destino)
         if cmd:
-    #for comando in cmd:
+            cmd=codifica(cmd)
+            lista=cmd.split()
+            nroCmd =lista[1]
             conexaoServidor.send(cmd)
             cmd=""
         #recebe e printa comandos
-            data = conexaoServidor.recv(1024)
-            data = validaData(data)
+            try:
+                data = conexaoServidor.recv(1024)
+                if data:
+                    data = validaData(data,nroCmd)
+                else:
+                    data= "ERRO 08: Resposta nula"
+            except Exception:
+                data="ERRO 01: Nao recebe"
+                
         else:
-            data="Comando nulo"
+            data="ERRO 02:Comando nulo"
 
         conexaoServidor.close()
-
     except Exception:
-        data="Sem conexao"
+        data="ERRO 03: nao conecta"
 
     return data
 
-def validaData(mensagem):
+def codifica(cmd):
+    return cmd.replace("-","")
+    
+
+def validaData(mensagem,nro):
     lista = mensagem.split()
-    if lista[0] != "RESPONSE":
-        return "Resposta Invalida"
+    if lista[0] != "RESPONSE" or lista[1] != nro:
+        return "ERRO 04: Resposta Invalida"
     lista = mensagem.split("RESPONSE")    
     return  lista[1]
