@@ -1,8 +1,9 @@
 import socket
 import time
 
-def enviarMsg(cmd):
+def enviarMsg(cmd,nroMaq):
     tempoInic = time.time()
+    #host = "192.168.0." + str(nroMaq)
     host = '127.0.0.1'
     porta = 5000
     conexaoServidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -31,10 +31,26 @@ Configuracao:
 
 	4) http://askubuntu.com/questions/547391/apache2-4-7-on-ubuntu-14-04-wont-execute-python-cgi-file-the-site-displays-pyt
 
-Execução:
+[PADRÃO] Execução na mesma maquina:
 
-1) No browser entrar no endereÃ§o localhost/cgi-bin/webserver.py
+1) No browser entrar no endereço localhost/cgi-bin/webserver.py
 
-2) Enviar comando
+1) Executar python daemon.py
 
-3) abrir deamon.py
+2) Enviar comando pela web
+
+OBS: neste modo o host padrao é 127.0.0.1, assim todas as maquinas executarao no mesmo daemon, para ter acesso remoto siga o proximo topico
+
+Execução remota:
+
+1) altere o codigo do backend.py na atribuicao da variavel host:
+	A)troque o código 
+		#host = "192.168.0." + str(nroMaq)
+		host = '127.0.0.1'
+	B)por
+		host = "192.168.0." + str(nroMaq)
+		#host = '127.0.0.1'
+
+2)Crie uma rede interna e defina o ip das maquinas que rodarão o deamon.py com os IP's 192.168.0.x , X=1,2,3
+
+3)Conecte a maquina que ira rodar a pagina web (webserver) na rede interna e siga os passos da Execução na mesma maquina

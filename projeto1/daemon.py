@@ -27,6 +27,7 @@ def main():
                 output = "ERRO 05: mensagem sem protocolo"
             else:
                 mensagem = mensagem.split()
+                print "\n" +  comando+"\n"
                 saidaTerminal = os.popen(comando).read()
                 if not saidaTerminal:                
                     saidaTerminal = "ERRO 07: Comando nao executado com sucesso"
@@ -35,7 +36,7 @@ def main():
         else:
             output = "ERRO 06: mensagem nula"
         try:
-            print "Enviou \"" + output + "\""
+            #print "Enviou \"" + output + "\""
             con.send(output)
 
         except Exception:
@@ -57,8 +58,11 @@ def decodifica(cmd):
     if lista[1] == "4":
         resultado = "uptime"
         #args=cmd.split("4")
-    if len(lista)>2:
-        resultado += " -"+lista[2]
+    del lista[0]
+    del lista[0]
+    
+    for arg in lista:
+        resultado += " -"+arg
     #resultado += args[1]
     resultado = protege(resultado)
     return resultado
