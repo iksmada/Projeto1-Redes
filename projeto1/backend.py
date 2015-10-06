@@ -1,6 +1,8 @@
 import socket
+import time
 
 def enviarMsg(cmd):
+    tempoInic = time.time()
     host = '127.0.0.1'
     porta = 5000
     conexaoServidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,13 +17,17 @@ def enviarMsg(cmd):
             cmd=""
         #recebe e printa comandos
             try:
-                data = conexaoServidor.recv(1024)
-                if data:
-                    data = validaData(data,nroCmd)
+                resposta = conexaoServidor.recv(1024)
+                if resposta:
+                    resposta = validaData(resposta,nroCmd)
+                    tempoFin = time.time()
+                    tempo =  tempoFin - tempoInic
+                    data = "Results (in "+ str("%.2f"%(tempo,)) +" ms)\n"+resposta
+                    
                 else:
                     data= "ERRO 08: Resposta nula"
             except Exception:
-                data="ERRO 01: Nao recebe"
+                data="ERRO 01: Nao recebe resposta"
                 
         else:
             data="ERRO 02:Comando nulo"
@@ -40,5 +46,5 @@ def validaData(mensagem,nro):
     lista = mensagem.split()
     if lista[0] != "RESPONSE" or lista[1] != nro:
         return "ERRO 04: Resposta Invalida"
-    lista = mensagem.split("RESPONSE")    
+    lista = mensagem.split("RESPONSE "+nro)    
     return  lista[1]
