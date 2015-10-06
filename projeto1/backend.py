@@ -9,6 +9,7 @@ def enviarMsg(cmd,nroMaq):
     conexaoServidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     destino = ((host, porta))
     try:
+        conexaoServidor.settimeout(2)
         conexaoServidor.connect(destino)
         if cmd:
             cmd=codifica(cmd)
