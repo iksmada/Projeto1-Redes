@@ -5,6 +5,7 @@ import sys
 from time import sleep
 from random import randint
 
+
 def Cliente(args):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     #recebe ip, porta e nome do arquivo pela linha de comando

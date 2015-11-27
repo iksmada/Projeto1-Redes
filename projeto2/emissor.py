@@ -2,21 +2,15 @@
 
 import socket
 import sys
+from Pacote import Pacote
 
 def Servidor(args):
     #recebe a porta pela linha de comando
     port = args[1]
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(("", port))
-    pacote = ""
-    '''
-    pacote[0:4]   : Numero de sequencia (Aleatorio) 4 bytes
-    pacote[5:9]   : ACK = 1+numero_seq_recebido     4 bytes
-    pacote[10:15] : Checksum                        5 bytes
-    pocate[15:]   : Data                            20 bytes
+    Pacote pacote
 
-    total bytes:                                    33 bytes
-    '''
 
     while 1:
         msg, addr = RecebePacote(s.recvfrom(33))
