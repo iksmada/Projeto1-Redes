@@ -1,13 +1,19 @@
 from random import randint
 from binascii import hexlify
 
+'''
+Referencias:
+http://packetlife.net/blog/2010/jun/7/understanding-tcp-sequence-acknowledgment-numbers/
+'''
+
 class Pacote(object):
     def __init__(self):
-        self.numeroSequencia = randint(100000000, 999999999)
-        self.ack = 0
-        self.checksum = 0
-        self.flags = [0, 0, 0]
-        self.data = ""
+        self.numeroSequencia = randint(100000000, 999999999) #8 bytes
+        self.ack = 0                                         #8 bytes
+        self.checksum = 0                                    #4 bytes
+        self.flags = [0, 0, 0]                               #3 bytes
+        self.data = ""                                       #20 bytes ... 20 caracteres por vez
+                                                             #Total: 43 bytes por pacote
 
     def ToString(self):
         ''' Prepara o pacote para ser enviado '''
@@ -37,9 +43,3 @@ class Pacote(object):
         byte2 = chr(soma & 0xFF)
         checksum = hexlify(byte1) + hexlify(byte2)
         return int(checksum)
-
-pacote = Pacote()
-pacote.numeroSequencia = 111111111
-pacote.ack = 22222222
-pacote.data = "oi tudo bem"
-print pacote.ToString()
