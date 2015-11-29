@@ -1,9 +1,9 @@
-#Cliente, faz requisições
+#Cliente, faz requisicoes
 
 import socket
 import sys
 from time import sleep
-from Pacote import Pacote
+from dPacote import Pacote
 
 def Cliente(args):
     pacoteEnviar = Pacote()
@@ -15,17 +15,19 @@ def Cliente(args):
     port = args[2]
     arq_name = args[3]
 
-    #cliente fica enviando ack de 1 em 1 segundo
     while(True):
-        pacoteRecebido = RecebePacote(s.recvfrom(33))
+        pacoteRecebido = RecebePacote(s.recvfrom(43))
         envioCorreto = VerificaPacote(pacoteRecebido)
         if envioCorreto:
+            #muda os parametros do pacote pra pedir o proximo e salva o texto recebido
             arquivoRecebido += pacoteRecebido.data
-            pacoteCorreto.ack
-            #muda os parametros do pacote pra pedir o proximo
+            pacoteEnviar.numeroSequencia = pacoteRecebido.ack
+            pacoteEnviar.ack = pacoteRecebido.ack + pacoteRecebido.numeroSequencia
+
         else:
+            #pede pra reenviar, esse else ta aqui so pra melhorar o entendimento, a ideia eh reenviar
+            #o mesmo pacote que foi enviado enteriormente, pois houve erro
             pass
-            #pede pra reenviar
 
         EnviaPacote(PacoteEnviar, s, host, port)
 
@@ -36,10 +38,10 @@ def RecebePacote(pacoteRecebido):
     ''' Recebe o pacote e coloca em um formato mais facil de trabalhar'''
     msg, addr = s.recvfrom(33)
     pacoteRecebido.ToPacote(msg)
-    return pacoteRecebido, addr
+    return pacoteRecebido
 
 def VerificaPacote(pacoteRecebido, host):
-    ''' Verifica se checksum e ack estão corretos '''
+    ''' Verifica se checksum e ack estao corretos '''
     if pacoteRecebido.checksum == pacoteRecebido.CalculaChecksum(pacoteRecebido.data):
         return True
     return False
