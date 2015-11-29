@@ -8,6 +8,7 @@ from Pacote import Pacote
 def Cliente(args):
     pacoteEnviar = Pacote()
     pacoteRecebido = Pacote()
+    arquivoRecebido = ""
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     #recebe ip, porta e nome do arquivo pela linha de comando
     host = args[1]
@@ -19,7 +20,8 @@ def Cliente(args):
         pacoteRecebido = RecebePacote(s.recvfrom(33))
         envioCorreto = VerificaPacote(pacoteRecebido)
         if envioCorreto:
-            pacoteCorreto.ack 
+            arquivoRecebido += pacoteRecebido.data
+            pacoteCorreto.ack
             #muda os parametros do pacote pra pedir o proximo
         else:
             pass
