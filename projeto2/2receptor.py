@@ -16,14 +16,18 @@ def Cliente(args):
     arq_name = args[3]
 
     while(True):
-        pacoteRecebido = RecebePacote(s.recvfrom(43))
+        IniciaConexao(s, host, port)
+        pacoteRecebido = RecebePacote()
         envioCorreto = VerificaPacote(pacoteRecebido)
         if envioCorreto:
             #muda os parametros do pacote pra pedir o proximo e salva o texto recebido
             arquivoRecebido += pacoteRecebido.data
             pacoteEnviar.numeroSequencia = pacoteRecebido.ack
             pacoteEnviar.ack = pacoteRecebido.ack + pacoteRecebido.numeroSequencia
-
+            if(pacoteRecebido.flags[2] == 1): #Flago[2] indica FIN
+                pacoteEnviar.flags[2] = 1
+                EnviaPacote(PacoteEnviar, s, host, port) #Envia o pacote e sai
+                break
         else:
             #pede pra reenviar, esse else ta aqui so pra melhorar o entendimento, a ideia eh reenviar
             #o mesmo pacote que foi enviado enteriormente, pois houve erro
@@ -34,7 +38,7 @@ def Cliente(args):
     #Cliente aceita encerrar e acaba a comunicacao
     s.close()
 
-def RecebePacote(pacoteRecebido):
+def RecebePacote():
     ''' Recebe o pacote e coloca em um formato mais facil de trabalhar'''
     msg, addr = s.recvfrom(33)
     pacoteRecebido.ToPacote(msg)
@@ -49,6 +53,22 @@ def VerificaPacote(pacoteRecebido, host):
 def EnviaPacote(pacote, s, host, port):
     ''' coloca o pacote no formato certo e envia'''
     s.sendto(pacote.ToString(), (host, port))
+
+def IniciaConexao(s, host, port):
+    ''' Faz a conexão inicial, envia um SYN, recebe um SYN ACK e envia um ACK'''
+    pacoteEnvia = Pacote()
+    pacoteRecebe = Pacote()
+    pacoteEnvia.flags[0] = 1
+    while True:
+        #Espera receber um SYN ACK
+        EnviaPacote(pacoteEnvia, s, host, port)
+        pacoteRecebe = RecebePacote()
+        if VetificaPacote(pacoteRecebe) and pacoteRecebe.flags[0] == 1 and pacoteRecebe.flags[1] == 1:
+            break
+
+    pacoteEnvia.numeroSequencia = pacoteRecebe.ack
+    pacoteEnviar.ack = pacoteRecebe.ack + pacoteRecebe.numeroSequencia
+    #Considerar que o ACK vai ser o pedido do arquivo, agora
 
 if __name__ == '__main__':
     Cliente(sys.argv)

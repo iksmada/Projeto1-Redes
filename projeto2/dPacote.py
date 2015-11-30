@@ -11,7 +11,7 @@ class Pacote(object):
         self.numeroSequencia = randint(100000000, 999999999) #8 bytes
         self.ack = 0                                         #8 bytes
         self.checksum = 0                                    #4 bytes
-        self.flags = [0, 0, 0]                               #3 bytes
+        self.flags = [0, 0, 0] # [SYN, ACK, FIN]              3 bytes
         self.data = ""                                       #20 bytes ... 20 caracteres por vez
                                                              #Total: 43 bytes por pacote
 
