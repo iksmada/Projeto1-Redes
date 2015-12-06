@@ -25,10 +25,12 @@ def Cliente(args):
     while(True):
         try:
             EnviaAck(s, pacoteRecebido, host, port)
-            pacoteRecebido = RecebePacote(s)
+            pacoteRecebido, addr = RecebePacote(s)
         except socket.timeout:
             enviocorreto = 0
         envioCorreto = VerificaPacote(pacoteRecebido)
+        print envioCorreto
+        sleep(1)
         if envioCorreto:
             #muda os parametros do pacote pra pedir o proximo e salva o texto recebido
             arquivoRecebido += pacoteRecebido.data
@@ -39,7 +41,7 @@ def Cliente(args):
             #o mesmo pacote que foi enviado enteriormente, pois houve erro
             pass
 
-        EnviaPacote(PacoteEnviar, s, host, port)
+        EnviaPacote(pacoteEnviar, s, host, port)
 
     #Cliente aceita encerrar e acaba a comunicacao
     s.close()
@@ -54,11 +56,9 @@ def RecebePacote(s):
 
 def VerificaPacote(pacoteRecebido):
     ''' Verifica se checksum e ack estao corretos '''
-    print pacoteRecebido.checksum
-    print pacoteRecebido.CalculaChecksum(pacoteRecebido.data)
-    # if pacoteRecebido.checksum == pacoteRecebido.CalculaChecksum(pacoteRecebido.data):
-    #     return True
-    # return False
+    if pacoteRecebido.checksum == pacoteRecebido.CalculaChecksum(pacoteRecebido.data):
+        return True
+    return False
 
 def EnviaPacote(pacote, s, host, port):
     ''' coloca o pacote no formato certo e envia'''
@@ -67,6 +67,7 @@ def EnviaPacote(pacote, s, host, port):
 def EnviaAck(s,pacoteRecebido, host, porta):
     """ACK the given seq_num pkt"""
     pacoteRecebido.data = ''
+    print pacoteRecebido.ToString()
     s.sendto(pacoteRecebido.ToString(), (host, porta)) #Envia o pacote todo, mas so importa o numero de sequencia
     print 'Cliente enviou ACK, nro sequencia: ', pacoteRecebido.numeroSequencia
 

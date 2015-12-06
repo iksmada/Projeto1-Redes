@@ -4,6 +4,7 @@
 import socket
 import sys
 import select
+from time import sleep
 from dPacote import Pacote
 
 TIMEOUT = 1.1
@@ -47,7 +48,8 @@ def Servidor(args):
             else: # Janela encheu
                 print "Atingiu timeout"
                 nack = 0
-
+            print pacoteRecebido.numeroSequencia,"  ", nackAntigo
+            sleep(1)
             if pacoteRecebido.numeroSequencia == nackAntigo:
                 nackAntigo += 1
                 nack -= 1
@@ -71,7 +73,7 @@ def VerificaPacote(pacoteRecebido, host):
     return False
 
 def EnviaPacote(pacoteEnviar, s, addr):
-    ''' coloca o pacote no formato correto e envia'''
+    ''' coloca o pacote no formato certo e envia'''
     s.sendto(pacoteEnviar.ToString(), addr)
 
 def LeArquivo(nome):

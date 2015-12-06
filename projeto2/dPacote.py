@@ -8,7 +8,7 @@ http://packetlife.net/blog/2010/jun/7/understanding-tcp-sequence-acknowledgment-
 
 class Pacote(object):
     def __init__(self):
-        self.numeroSequencia = randint(100000000, 999999999) #8 bytes
+        self.numeroSequencia = 0 #8 bytes
         self.ack = 0                                         #8 bytes
         self.checksum = 0                                    #5 bytes
         self.data = ""                                       #20 bytes ... 20 caracteres por vez
