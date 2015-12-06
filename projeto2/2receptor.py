@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 #Cliente, faz requisicoes
 
 import socket
@@ -6,20 +7,25 @@ from time import sleep
 from dPacote import Pacote
 
 def Cliente(args):
+    if len(args) < 3:
+        print 'Entrada errada. execucao se da por:\n\tpython receptor.py <hostname> <porta> <nome_arquivo>'
+        sys.exit()
     pacoteEnviar = Pacote()
     pacoteRecebido = Pacote()
     arquivoRecebido = ""
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     #recebe ip, porta e nome do arquivo pela linha de comando
     host = args[1]
-    port = args[2]
+    port = int(args[2])
     arq_name = args[3]
+    #Numero de pacotes que podem ser enviados sem confirmação
     janela = 3
     numeroSequenciaEsperado = 0
 
     while(True):
         try:
-            pacoteRecebido = RecebePacote()
+            EnviaAck(s, pacoteRecebido, host, port)
+            pacoteRecebido = RecebePacote(s)
         except socket.timeout:
             enviocorreto = 0
         envioCorreto = VerificaPacote(pacoteRecebido)
@@ -39,17 +45,20 @@ def Cliente(args):
     s.close()
     EscreveArquivo(arquivoRecebido)
 
-def RecebePacote():
+def RecebePacote(s):
     ''' Recebe o pacote e coloca em um formato mais facil de trabalhar'''
-    msg, addr = s.recvfrom(33)
+    pacoteRecebido = Pacote()
+    msg, addr = s.recvfrom(4096)
     pacoteRecebido.ToPacote(msg)
-    return pacoteRecebido
+    return pacoteRecebido, addr
 
-def VerificaPacote(pacoteRecebido, host):
+def VerificaPacote(pacoteRecebido):
     ''' Verifica se checksum e ack estao corretos '''
-    if pacoteRecebido.checksum == pacoteRecebido.CalculaChecksum(pacoteRecebido.data):
-        return True
-    return False
+    print pacoteRecebido.checksum
+    print pacoteRecebido.CalculaChecksum(pacoteRecebido.data)
+    # if pacoteRecebido.checksum == pacoteRecebido.CalculaChecksum(pacoteRecebido.data):
+    #     return True
+    # return False
 
 def EnviaPacote(pacote, s, host, port):
     ''' coloca o pacote no formato certo e envia'''
@@ -58,13 +67,16 @@ def EnviaPacote(pacote, s, host, port):
 def EnviaAck(s,pacoteRecebido, host, porta):
     """ACK the given seq_num pkt"""
     pacoteRecebido.data = ''
-    s.sendto(pacoteRecebido.toString(), (host, porta)) #Envia o pacote todo, mas so importa o numero de sequencia
-    print 'Servidor enviou ACK, nro sequencia: ', pacoteRecebido.numeroSequencia
+    s.sendto(pacoteRecebido.ToString(), (host, porta)) #Envia o pacote todo, mas so importa o numero de sequencia
+    print 'Cliente enviou ACK, nro sequencia: ', pacoteRecebido.numeroSequencia
 
 def EscreveArquivo(arquivo):
     ''' Escreve o texto recebido do servidor em um arquivo chamado Arquivo_recebido.txt '''
-    arquivo = open("Arquivo_recebido.txt", "w")
-    arquivo.write(arquivo)
+    try:
+        arquivo = open("Arquivo_recebido.txt", "w")
+        arquivo.write(arquivo)
+    except Exception:
+        print 'Impossível escrever arquivo:\n\tVerifique se o arquivo já existe e o programa tem permissão de escrita'
 
 if __name__ == '__main__':
     Cliente(sys.argv)
