@@ -10,36 +10,35 @@ class Pacote(object):
     def __init__(self):
         self.numeroSequencia = randint(100000000, 999999999) #8 bytes
         self.ack = 0                                         #8 bytes
-        self.checksum = 0                                    #4 bytes
-        self.flags = [0, 0, 0] # [SYN, ACK, FIN]              3 bytes
+        self.checksum = 0                                    #5 bytes
         self.data = ""                                       #20 bytes ... 20 caracteres por vez
+        self.chegou = False
                                                              #Total: 43 bytes por pacote
 
     def ToString(self):
         ''' Prepara o pacote para ser enviado '''
-        numeroSequencia = str(self.numeroSequencia)[1:]
+        numeroSequencia = str(self.numeroSequencia + 1000000000)[2:]
         ack = str(self.ack + 1000000000)[2:]
         self.checksum = self.CalculaChecksum(self.data)
-        checksum = str(self.checksum + 100000)[2:]
-        flags = ""
-        for i in self.flags: flags += str(i)
-        return (numeroSequencia + ack + checksum + flags + self.data)
+        checksum = str(self.checksum + 1000000)[2:]
+        return (numeroSequencia + ack + checksum + self.data)
 
     def ToPacote(self, mensagem):
         ''' "descompacta" o pacote que foi recebido '''
         self.numeroSequencia = int(mensagem[0:8])
-        self.ack = int(mensagem[8:15])
-        self.checksum = self.CalculaChecksum(mensagem[21:])#int(mensagem[8:12])
-        self.flags = []
-        for i in mensagem[18:21]: flags.append(int(i))
-        self.flags = flags
+        self.ack = int(mensagem[8:14])
+        self.checksum = int(mensagem[16:21])
         self.data = mensagem[21:]
 
-    def CalculaChecksum(self, data):
-        ''' Soma todos os dados e cria o checksum'''
-        soma = 0
-        for i in data: soma += ord(i)
-        byte1 = chr(soma / 0xFF)
-        byte2 = chr(soma & 0xFF)
-        checksum = hexlify(byte1) + hexlify(byte2)
-        return int(checksum)
+    def CalculaChecksum(self, msg):
+        ''' Calcula o checksum utilizando o conteudo da mensagem '''
+        # Force data into 16 bit chunks for checksum
+        if msg == '':
+            return 0
+        if (len(msg) % 2) != 0:
+            msg += "0"
+        s = 0
+        for i in range(0, len(msg), 2):
+            w = ord(msg[i]) + (ord(msg[i+1]) << 8)
+            s = ((s+w) & 0xffff) + ((s+w) >> 16)
+        return ~s & 0xffff
