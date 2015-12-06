@@ -14,20 +14,20 @@ def Cliente(args):
     host = args[1]
     port = args[2]
     arq_name = args[3]
+    janela = 3
+    numeroSequenciaEsperado = 0
 
     while(True):
-        IniciaConexao(s, host, port)
-        pacoteRecebido = RecebePacote()
+        try:
+            pacoteRecebido = RecebePacote()
+        except socket.timeout:
+            enviocorreto = 0
         envioCorreto = VerificaPacote(pacoteRecebido)
         if envioCorreto:
             #muda os parametros do pacote pra pedir o proximo e salva o texto recebido
             arquivoRecebido += pacoteRecebido.data
-            pacoteEnviar.numeroSequencia = pacoteRecebido.ack
-            pacoteEnviar.ack = pacoteRecebido.ack + pacoteRecebido.numeroSequencia
-            if(pacoteRecebido.flags[2] == 1): #Flago[2] indica FIN
-                pacoteEnviar.flags[2] = 1
-                EnviaPacote(PacoteEnviar, s, host, port) #Envia o pacote e sai
-                break
+            EnviaAck(s, pacoteRecebido, host, port)
+            numeroSequenciaEsperado += 1
         else:
             #pede pra reenviar, esse else ta aqui so pra melhorar o entendimento, a ideia eh reenviar
             #o mesmo pacote que foi enviado enteriormente, pois houve erro
@@ -37,6 +37,7 @@ def Cliente(args):
 
     #Cliente aceita encerrar e acaba a comunicacao
     s.close()
+    EscreveArquivo(arquivoRecebido)
 
 def RecebePacote():
     ''' Recebe o pacote e coloca em um formato mais facil de trabalhar'''
@@ -54,21 +55,16 @@ def EnviaPacote(pacote, s, host, port):
     ''' coloca o pacote no formato certo e envia'''
     s.sendto(pacote.ToString(), (host, port))
 
-def IniciaConexao(s, host, port):
-    ''' Faz a conexão inicial, envia um SYN, recebe um SYN ACK e envia um ACK'''
-    pacoteEnvia = Pacote()
-    pacoteRecebe = Pacote()
-    pacoteEnvia.flags[0] = 1
-    while True:
-        #Espera receber um SYN ACK
-        EnviaPacote(pacoteEnvia, s, host, port)
-        pacoteRecebe = RecebePacote()
-        if VetificaPacote(pacoteRecebe) and pacoteRecebe.flags[0] == 1 and pacoteRecebe.flags[1] == 1:
-            break
+def EnviaAck(s,pacoteRecebido, host, porta):
+    """ACK the given seq_num pkt"""
+    pacoteRecebido.data = ''
+    s.sendto(pacoteRecebido.toString(), (host, porta)) #Envia o pacote todo, mas so importa o numero de sequencia
+    print 'Servidor enviou ACK, nro sequencia: ', pacoteRecebido.numeroSequencia
 
-    pacoteEnvia.numeroSequencia = pacoteRecebe.ack
-    pacoteEnviar.ack = pacoteRecebe.ack + pacoteRecebe.numeroSequencia
-    #Considerar que o ACK vai ser o pedido do arquivo, agora
+def EscreveArquivo(arquivo):
+    ''' Escreve o texto recebido do servidor em um arquivo chamado Arquivo_recebido.txt '''
+    arquivo = open("Arquivo_recebido.txt", "w")
+    arquivo.write(arquivo)
 
 if __name__ == '__main__':
     Cliente(sys.argv)
