@@ -33,7 +33,7 @@ def Cliente(args):
             enviocorreto = 0
         envioCorreto = VerificaPacote(pacoteRecebido)
         sleep(0.2)
-        if envioCorreto and numeroSequenciaEsperado==pacoteRecebido.numeroSequencia :
+        if envioCorreto and numeroSequenciaEsperado==pacoteRecebido.numeroSequencia:
             #muda os parametros do pacote pra pedir o proximo e salva o texto recebido
             arquivoRecebido += pacoteRecebido.data
             EnviaAck(s, pacoteRecebido, host, port)
@@ -42,7 +42,7 @@ def Cliente(args):
                 break
         else:
             EnviaAck(s, pacoteRecebido, host, port)
-            print "recebi errado, esperava",numeroSequenciaEsperado
+            print "recebi errado, esperava ",numeroSequenciaEsperado
 
     #Cliente aceita encerrar e acaba a comunicacao
     s.close()

@@ -16,7 +16,7 @@ class Pacote(object):
                                                              #Total: 41 bytes por pacote
 
     def ToString(self):
-        ''' Prepara o pacote para ser enviado '''
+        ''' Prepara o pacote para ser enviado, transformando tudo em string '''
         numeroSequencia = str(self.numeroSequencia + 1000000000)[2:]
         ack = str(self.ack + 1000000000)[2:]
         self.checksum = self.CalculaChecksum(self.data)
@@ -33,7 +33,6 @@ class Pacote(object):
 
     def CalculaChecksum(self, msg):
         ''' Calcula o checksum utilizando o conteudo da mensagem '''
-        # Force data into 16 bit chunks for checksum
         if msg == '':
             return 0
         if (len(msg) % 2) != 0:
