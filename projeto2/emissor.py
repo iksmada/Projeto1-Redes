@@ -22,6 +22,7 @@ def Servidor(args):
     pacoteEnviar = Pacote()
     pacoteRecebido = Pacote()
     janela = 3
+    tripleNack=0
     texto = LeArquivo(nomeArquivo)
     if texto == False:
        print 'Arquivo não existe ou não tem permissão para leitura:\n\tVerifique se o arquivo existe\n\tTente mudar a permissao (chmod)'
@@ -38,8 +39,10 @@ def Servidor(args):
         # Can we send a packet, do we need to send pkt
         if nack < janela and (nack + nackAntigo) < len(pacotes):
             EnviaPacote(pacotes[nackAntigo + nack], s, addr)
-            print 'Enviando pacote'
+            print 'Enviando pacote ', pacotes[nackAntigo + nack].numeroSequencia
             nack += 1
+            #pacoteRecebido, addr = RecebePacote(s)
+            sleep(0.2)
         else:
             #Espera pelos acks do cliente
             ready = select.select([s], [], [], TIMEOUT)
@@ -48,15 +51,19 @@ def Servidor(args):
             else: # Janela encheu
                 print "Atingiu timeout"
                 nack = 0
-            print pacoteRecebido.numeroSequencia,"  ", nackAntigo
-            sleep(1)
+            print "nro seq recebido:", pacoteRecebido.numeroSequencia,", Ack q eu sei:", nackAntigo
+            #sleep(0.5)
             if pacoteRecebido.numeroSequencia == nackAntigo:
                 nackAntigo += 1
                 nack -= 1
+                tripleNack=0
             else:
-                nack = 0
+                tripleNack+=1
+                if tripleNack==3:
+                    tripleNack=0
+                    nack = 0
     # Close server connection and exit successfully
-    sock.close()
+    s.close()
     sys.exit(0)
 
 def RecebePacote(s):
@@ -101,10 +108,6 @@ def CriaPacotes(texto):
         pacotes.append(pacote)
         texto = texto[20:]
         numeroSequencia += 1
-        #print pacote.ToString()
-    # Newly built list of pacotes
-    for i in pacotes:
-        print i.ToString()
     return pacotes
 
 

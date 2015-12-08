@@ -21,6 +21,7 @@ def Cliente(args):
     #Numero de pacotes que podem ser enviados sem confirmação
     janela = 3
     numeroSequenciaEsperado = 0
+    numeroSequenciaAntigo = 0
 
     while(True):
         try:
@@ -30,21 +31,23 @@ def Cliente(args):
             enviocorreto = 0
         envioCorreto = VerificaPacote(pacoteRecebido)
         print envioCorreto
-        sleep(1)
-        if envioCorreto:
+        sleep(0.2)
+        if envioCorreto and numeroSequenciaEsperado==pacoteRecebido.numeroSequencia :
             #muda os parametros do pacote pra pedir o proximo e salva o texto recebido
             arquivoRecebido += pacoteRecebido.data
+            #print arquivoRecebido
             EnviaAck(s, pacoteRecebido, host, port)
+            numeroSequenciaAntigo = numeroSequenciaEsperado
             numeroSequenciaEsperado += 1
         else:
-            #pede pra reenviar, esse else ta aqui so pra melhorar o entendimento, a ideia eh reenviar
-            #o mesmo pacote que foi enviado enteriormente, pois houve erro
-            pass
-
-        EnviaPacote(pacoteEnviar, s, host, port)
-
+            #pacoteRecebido.numeroSequencia = numeroSequenciaAntigo
+            EnviaAck(s, pacoteRecebido, host, port)
+            print "recebi errado, esperava",numeroSequenciaEsperado
+        if pacoteRecebido.numeroSequencia==54:
+            break
     #Cliente aceita encerrar e acaba a comunicacao
     s.close()
+    print arquivoRecebido
     EscreveArquivo(arquivoRecebido)
 
 def RecebePacote(s):
@@ -67,15 +70,15 @@ def EnviaPacote(pacote, s, host, port):
 def EnviaAck(s,pacoteRecebido, host, porta):
     """ACK the given seq_num pkt"""
     pacoteRecebido.data = ''
-    print pacoteRecebido.ToString()
+    #print pacoteRecebido.ToString()
     s.sendto(pacoteRecebido.ToString(), (host, porta)) #Envia o pacote todo, mas so importa o numero de sequencia
     print 'Cliente enviou ACK, nro sequencia: ', pacoteRecebido.numeroSequencia
 
-def EscreveArquivo(arquivo):
+def EscreveArquivo(conteudo):
     ''' Escreve o texto recebido do servidor em um arquivo chamado Arquivo_recebido.txt '''
     try:
         arquivo = open("Arquivo_recebido.txt", "w")
-        arquivo.write(arquivo)
+        arquivo.write(conteudo)
     except Exception:
         print 'Impossível escrever arquivo:\n\tVerifique se o arquivo já existe e o programa tem permissão de escrita'
 
