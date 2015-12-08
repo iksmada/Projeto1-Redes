@@ -4,7 +4,7 @@
 import socket
 import sys
 from time import sleep
-from dPacote import Pacote
+from Pacote import Pacote
 
 def Cliente(args):
     if len(args) < 3:

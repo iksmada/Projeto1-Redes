@@ -5,7 +5,7 @@ import socket
 import sys
 import select
 from time import sleep
-from dPacote import Pacote
+from Pacote import Pacote
 
 TIMEOUT = 1.1
 
@@ -88,8 +88,8 @@ def CriaPacotes(texto):
     ''' forma uma lista de pacotes que contem todos os pacotes que serao enviados '''
     numeroSequencia = 0
     pacotes = []
-    pacote = Pacote()
     while texto:
+        pacote = Pacote()
         #Forma o pacote
         pacote.numeroSequencia = numeroSequencia
         pacote.ack = 0
@@ -101,8 +101,12 @@ def CriaPacotes(texto):
         pacotes.append(pacote)
         texto = texto[20:]
         numeroSequencia += 1
+        #print pacote.ToString()
     # Newly built list of pacotes
+    for i in pacotes:
+        print i.ToString()
     return pacotes
+
 
 
 if __name__ == "__main__":
