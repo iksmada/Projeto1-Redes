@@ -10,28 +10,36 @@ from Pacote import Pacote
 TIMEOUT = 1.1
 
 def Servidor(args):
-    if len(args) < 3:
-        print 'Entrada errada. execução se da por:\n\tpython emissor.py <porta> <nome_arquivo>'
+    if len(args) != 2:
+        print 'Entrada errada. execução se da por:\n\tpython emissor.py <porta>'# <nome_arquivo>'
         sys.exit()
     #recebe a porta pela linha de comando
     port = int(args[1])
     #Nao consegui fazer o cliente pedir o arquivo, tem que entrar com o nome
-    nomeArquivo = args[2]
+    #nomeArquivo = args[2]
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(("", port))
     pacoteEnviar = Pacote()
     pacoteRecebido = Pacote()
     janela = 3
-    tripleNack=0
-    texto = LeArquivo(nomeArquivo)
-    if texto == False:
-       print 'Arquivo não existe ou não tem permissão para leitura:\n\tVerifique se o arquivo existe\n\tTente mudar a permissao (chmod)'
-       sys.exit()
-    pacotes = CriaPacotes(texto)
-    #Descobre o endereço do cliente
+    tripleNack= []
     print 'Esperando o cliente conectar'
     msg, addr = RecebePacote(s)
-    print 'descobri o endereco: ', addr
+    print msg.data
+    print 'Descobri o endereco do cliente: ', addr
+    for i in range(janela):
+        tripleNack.append(0)
+    texto = LeArquivo(msg.data)
+    if texto == False:
+       print 'Arquivo não existe ou não tem permissão para leitura:\n\tVerifique se o arquivo existe\n\tTente mudar a permissao (chmod)'
+       print 'saindo...'
+       pacoteEnviar.sair = 1
+       pacotes = []
+       pacotes.append(pacoteEnviar)
+       #sys.exit()
+    else:
+       pacotes = CriaPacotes(texto)
+    #Descobre o endereço do cliente
     nackAntigo = 0
     nack = 0
     #Logica do rdt send
@@ -49,18 +57,17 @@ def Servidor(args):
             if ready[0]:
                 pacoteRecebido, addr = RecebePacote(s)
             else: # Janela encheu
-                print "Atingiu timeout"
+                print "Atingiu tempo limite, reenviando"
                 nack = 0
-            print "nro seq recebido:", pacoteRecebido.numeroSequencia,", Ack q eu sei:", nackAntigo
-            #sleep(0.5)
+            print "Número de sequencia recebido: ", pacoteRecebido.numeroSequencia,", Ack conhecido:", nackAntigo
             if pacoteRecebido.numeroSequencia == nackAntigo:
+                tripleNack[nackAntigo%janela]=0
                 nackAntigo += 1
                 nack -= 1
-                tripleNack=0
             else:
-                tripleNack+=1
-                if tripleNack==3:
-                    tripleNack=0
+                tripleNack[nackAntigo%janela]+=1
+                if tripleNack[nackAntigo%janela]==3:
+                    tripleNack[nackAntigo%janela]=0
                     nack = 0
     # Close server connection and exit successfully
     s.close()
@@ -102,15 +109,21 @@ def CriaPacotes(texto):
         pacote.ack = 0
         #Envia de 20 em 20 caracteres
         pacote.data = texto[:20]
+        pacote.sair = 0
         pacote.checksum = pacote.CalculaChecksum(texto[:20])
-        pacote.chegou = False
         #adciona o pacote na lista de pacotes
         pacotes.append(pacote)
         texto = texto[20:]
         numeroSequencia += 1
+    #Forma o pacote para sair, a unica coisa que importa aqui é sair = 1
+    pacote = Pacote()
+    pacote.numeroSequencia = numeroSequencia
+    pacote.checksum = 0
+    pacote.texto = ''
+    pacote.sair = 1
+    pacotes.append(pacote)
+
     return pacotes
-
-
 
 if __name__ == "__main__":
     Servidor(sys.argv)
